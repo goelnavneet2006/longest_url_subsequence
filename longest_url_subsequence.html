@@ -1,0 +1,81 @@
+<script>
+// We have some clickstream data that we gathered on our client's website. Using cookies, we collected snippets of users' anonymized URL histories while they browsed the site. The histories are in chronological order and no URL was visited more than once per person.
+
+// Write a function that takes two user’s browsing histories as input and returns the longest contiguous sequence of URLs that appears in both.
+
+// Sample input:
+
+// user0 = [ "/nine.html", "/four.html", "/six.html", "/seven.html", "/one.html" ]
+// user1 = [ "/one.html", "/two.html", "/three.html", "/four.html", "/six.html" ]
+// user2 = [ "/nine.html", "/two.html", "/three.html", "/four.html", "/six.html",
+//           "/seven.html" ]
+// user3 = [ "/three.html", "/eight.html" ]
+
+// Sample output:
+
+// (user0, user2):
+//    /four.html
+//    /six.html
+//    /seven.html
+
+// (user1, user2):
+//    /two.html
+//    /three.html
+//    /four.html
+//    /six.html
+
+// (user0, user3):
+//    None
+
+// (user1, user3):
+//    /three.html
+
+function findLongestMatch(user1List, user2List) {
+  var user1Map = {};
+
+  for (var i = 0; i < user1List.length; i++) {
+    if (i + 1 === user1List.length) {
+      user1Map[user1List[i]] = true;
+    } else {
+      user1Map[user1List[i]] = user1List[i+1];
+    }
+  }
+
+  // var result = [];
+  var prevCount = 0;
+  var currentCount = 0;
+  var prevIndex = -1;
+  var currentIndex = -1;
+  var next;
+
+  for (var i = 0; i < user2List.length; i++) {
+    if (!next && user1Map[user2List[i]]) {
+      currentIndex = i;
+      next = user1Map[user2List[i]];
+      currentCount++;
+    } else if (next === user2List[i] && i === currentIndex+currentCount) {
+      next = user1Map[user2List[i]];
+      currentCount++;
+    } else if (i > currentIndex+currentCount && user1Map[user2List[i]]) {
+      if (prevCount && currentCount > prevCount) {
+        prevCount = currentCount;
+        prevIndex = currentIndex;
+      }
+      currentIndex = i;
+      currentCount = 1;
+      next = user1Map[user2List[i]];
+    }
+  }
+
+  console.log(currentIndex, currentCount);
+}
+
+
+var user0 = [ "/nine.html", "/four.html", "/six.html", "/seven.html", "/one.html" ];
+var user1 = [ "/one.html", "/two.html", "/three.html", "/four.html", "/six.html" ];
+var user2 = [ "/nine.html", "/two.html", "/three.html", "/four.html", "/six.html", "/seven.html"];
+var user3 = [ "/three.html", "/eight.html" ];
+
+findLongestMatch(user0, user0);
+
+</script>
